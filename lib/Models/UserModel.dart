@@ -31,4 +31,17 @@ class User {
       'birth_date': birth_date,
     };
   }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      first_name: json['first_name'],
+      last_name: json['last_name'],
+      gender: json['gender'],
+      role: json['role'],
+      password: json['password'],
+      email: json['email'],
+      phone_number: json['phone_number'],
+      birth_date: json['birth_date']
+    );
+  }
 }

@@ -4,11 +4,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_seminario/Models/PlaceModel.dart';
-import 'package:flutter_seminario/Screens/create_post.dart';
+import 'package:flutter_seminario/Models/UserModel.dart';
 import 'package:flutter_seminario/Screens/home_page.dart';
-import 'package:flutter_seminario/Screens/detalles_user.dart';
-import 'package:flutter_seminario/Widgets/button_sign_in.dart';
+import 'package:flutter_seminario/Screens/detalles_place.dart';
 import 'package:flutter_seminario/Widgets/post.dart';
+import 'package:flutter_seminario/Widgets/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' ;
@@ -17,15 +17,15 @@ import 'package:flutter_seminario/Services/UserService.dart';
 late UserService userService;
 
 
-class PlaceListPage extends StatefulWidget {
-    PlaceListPage({Key? key}) : super(key: key);
+class UserListPage extends StatefulWidget {
+    UserListPage({Key? key}) : super(key: key);
 
   @override
-  _PlaceListPage createState() => _PlaceListPage();
+  _UserListPage createState() => _UserListPage();
 }
 
-class _PlaceListPage extends State<PlaceListPage> {
-  late List<Place> lista_users;
+class _UserListPage extends State<UserListPage> {
+  late List<User> lista_users;
 
   bool isLoading = true; // Nuevo estado para indicar si se están cargando los datos
 
@@ -38,7 +38,7 @@ class _PlaceListPage extends State<PlaceListPage> {
 
   void getData() async {
     try {
-      lista_users = await userService.getData();
+      lista_users = await userService.getUserList();
       setState(() {
         isLoading = false; // Cambiar el estado de carga cuando los datos están disponibles
       });
@@ -61,7 +61,7 @@ class _PlaceListPage extends State<PlaceListPage> {
       // Muestra la lista de usuarios cuando los datos están disponibles
       return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text('Places List')),
+          title: Center(child: Text('User List')),
           elevation: 0,
           leading: Builder(
             builder: (context) => IconButton(
@@ -75,29 +75,16 @@ class _PlaceListPage extends State<PlaceListPage> {
             ),
           ),
         ),
-       body: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: lista_users.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: PostWidget(place: lista_users[index]),
-                    );
-                  },
-                ),
-              ),
-              SignInButton(
-                onPressed: (){ 
-                  Get.to(CreatePostScreen());
-                },
-                text: '¡Crea un post!'
-              ),
-            ],
-          ),
+        body: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child:
+                UserWidget(user: lista_users[index]),
+            );
+          },
+          itemCount: lista_users.length,
         ),
+        
       );
     }
   }

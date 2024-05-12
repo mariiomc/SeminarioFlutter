@@ -62,8 +62,124 @@ class UserService {
     }
   }
 
+  Future<int> createPlace(Place newPlace)async{
+    print('createPlace');
+   
+   dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) async {
+      // Obtener el token guardado
+      final token = getToken();
+
+      print('token: ${token}');
+      
+      // Si el token está disponible, agregarlo a la cabecera 'x-access-token'
+      if (token != null) {
+        options.headers['x-access-token'] = token;
+      }
+      return handler.next(options);
+    },
+  ));
+
+    print('URL: $baseUrl/place');
+    Response response = await dio.post('$baseUrl/place', data: newPlace.toJson());
+
+    data = response.data.toString();
+    print('Data: $data');
+    statusCode = response.statusCode;
+    print('Status code: $statusCode');
+
+    if (statusCode == 201) {
+      print('201');
+      return 201;
+    } else if (statusCode == 400) {
+      print('400');
+      return 400;
+    } else if (statusCode == 500) {
+      print('500');
+      return 500;
+    } else {
+      print('-1');
+      return -1;
+    }
+  }
+
+  Future<int> updatePlace(Place newPlace, String id)async{
+    print('updatePlace');
+   
+   dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) async {
+      // Obtener el token guardado
+      final token = getToken();
+
+      print('token: ${token}');
+      
+      // Si el token está disponible, agregarlo a la cabecera 'x-access-token'
+      if (token != null) {
+        options.headers['x-access-token'] = token;
+      }
+      return handler.next(options);
+    },
+  ));
+
+    print("URL: $baseUrl/place/$id");
+    Response response = await dio.put('$baseUrl/place/$id', data: newPlace.toJson());
+
+    data = response.data.toString();
+    print('Data: $data');
+    statusCode = response.statusCode;
+    print('Status code: $statusCode');
+
+    if (statusCode == 201) {
+      print('201');
+      return 201;
+    } else if (statusCode == 400) {
+      print('400');
+      return 400;
+    } else if (statusCode == 500) {
+      print('500');
+      return 500;
+    } else {
+      print('-1');
+      return -1;
+    }
+  }
+
+
   Future<List<Place>> getData() async {
   print('getData');
+  // Interceptor para agregar el token a la cabecera 'x-access-token'
+  dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) async {
+      // Obtener el token guardado
+      final token = getToken();
+
+      print('token: ${token}');
+      
+      // Si el token está disponible, agregarlo a la cabecera 'x-access-token'
+      if (token != null) {
+        options.headers['x-access-token'] = token;
+      }
+      return handler.next(options);
+    },
+  ));
+  
+  try {
+    var res = await dio.get('$baseUrl/place');
+    print("get");
+    List<dynamic> responseData = res.data; // Obtener los datos de la respuesta
+  
+    // Convertir los datos en una lista de objetos Place
+    List<Place> places = responseData.map((data) => Place.fromJson(data)).toList();
+    print('places');
+    return places; // Devolver la lista de lugares
+  } catch (e) {
+    // Manejar cualquier error que pueda ocurrir durante la solicitud
+    print('Error fetching data: $e');
+    throw e; // Relanzar el error para que el llamador pueda manejarlo
+  }
+}
+
+ Future<List<User>> getUserList() async {
   // Interceptor para agregar el token a la cabecera 'x-access-token'
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
@@ -81,11 +197,11 @@ class UserService {
   ));
   
   try {
-    var res = await dio.get('$baseUrl/place');
+    var res = await dio.get('$baseUrl/users');
     List<dynamic> responseData = res.data; // Obtener los datos de la respuesta
   
-    // Convertir los datos en una lista de objetos Place
-    List<Place> places = responseData.map((data) => Place.fromJson(data)).toList();
+    // Convertir los datos en una lista de objetos User
+    List<User> places = responseData.map((data) => User.fromJson(data)).toList();
   
     return places; // Devolver la lista de lugares
   } catch (e) {
