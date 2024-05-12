@@ -115,7 +115,7 @@ class CreatePostController extends GetxController {
           creationDate: DateTime.now(),
           modifiedDate: DateTime.now(),
         );
-        userService.git (newPlace).then((statusCode) {
+        userService.createPlace(newPlace).then((statusCode) {
           // La solicitud se completó exitosamente, puedes realizar acciones adicionales si es necesario
           print('Place creado exitosamente');
           Get.snackbar(
